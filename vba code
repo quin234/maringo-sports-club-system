@@ -1,0 +1,50 @@
+Option Compare Database
+
+
+
+Private Sub Combo79_AfterUpdate()
+Me.store.Value = DLookup("STOCK", "SPORTS_ITEMS", "ITEMID = '" & Me.ITEMID.Value & "'")
+
+End Sub
+
+Private Sub save_Click()
+
+Dim update As String
+Dim stock, total1, searchforitem As Integer
+
+searchforitem = Me.ITEMID.Value
+
+stock = DLookup("STOCK", "SPORTS_ITEMS", "ITEMID = '" & searchforitem & "'")
+Me.STOCK_LEVEL = stock - Me.QUANTITY.Value
+update = "UPDATE SPORTS_ITEMS set STOCK = '" & Me.STOCK_LEVEL.Value & "'" & "where ITEMID = '" & Me.ITEMID.Value & "'"
+
+
+If Me.QUANTITY.Value = "" Then
+Me.QUANTITY.SetFocus
+End If
+
+If Me.STOCK_LEVEL.Value < 0.2 * 100 Then
+    MsgBox "The Stock level is below 20%"
+    Me.QUANTITY.SetFocus
+Else
+
+    
+totall = Me.QUANTITY * Me.AMOUNT.Value
+
+If totall > 10000 Then
+    Me.DISCOUNTED_AMOUNT = 0.5 * totall
+   
+    MsgBox "5% DISCOUNT HAS BEEN GIVEN", vbInformation, "CONGRATULATIONS"
+    Me.TOTAL = 0.95 * totall
+Else
+Me.TOTAL = totall
+
+
+End If
+End If
+
+DoCmd.RunCommand acCmdSaveRecord
+CurrentDb.Execute update
+End Sub
+
+
